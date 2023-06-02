@@ -60,10 +60,10 @@ class Game:
         self.hover_restart = False
         self.hover_home = False
 
-    def set_ai_game(self, type:bool):
-        self.ai_game = type
+    def set_ai_game(self, ai_game:bool):
+        self.ai_game = ai_game
 
-        if type:
+        if self.ai_game:
             self.path = 'resources/ai-highscore.txt'
         else:
             self.path = 'resources/highscore.txt'
@@ -72,28 +72,50 @@ class Game:
         self.high_score = int(file.readline())
         file.close()
 
-    def draw_txt(self, str:str, x:int, y:int):
-        src = self.font.render(str, True, self.colors['light text'])
+    def draw_txt(self, str:str, x:int, y:int, color='', size=-1):
+        if color == '':
+            color = 'light text'
+        if size == -1:
+            self.font = pygame.font.Font('freesansbold.ttf', FONT_SIZE)
+        else:
+            self.font = pygame.font.Font('freesansbold.ttf', size)
+        src = self.font.render(str, True, self.colors[color])
         self.display.blit(src, [x,y])
+
+    def draw_rectangle(self, x:int, y:int, size_x:int, size_y:int, color):
+        pygame.draw.rect(self.display, 'black', [x-2, y-2, size_x+4, size_y+4], 2, 5)
+        pygame.draw.rect(self.display, color, [x, y, size_x, size_y], 0, 5)
 
     def draw_board_base(self):
         self.display.fill(self.colors['bg'])
-        self.draw_txt("NEXT", 450, 20)
-        self.draw_txt("SCORE", 435, 150)
-        self.draw_txt(str(self.score), 580-self.font.size(str(self.score))[0], 200)
-        self.draw_txt("HIGH SCORE", 100, 540)
-        self.draw_txt(str(self.high_score), 404, 540)
+        
+        # GAME BOARD
+        self.draw_rectangle(50, 22, 350, 70, 'dark gray')
+        self.draw_rectangle(50, 100, 350, 420, 'light gray')
+        # NEXT BLOCK
+        self.draw_rectangle(420, 22, 180, 70, 'dark gray')
+        self.draw_txt("NEXT", 430, 42, 'other', size=30)
+        self.draw_block(self.next_num, 530, 27, size=60)
+        # LIVE SCORE
+        self.draw_rectangle(420, 100, 180, 100, 'dark gray')
+        self.draw_txt("SCORE", 440, 110, 'other')
+        self.draw_txt(str(self.score), 590-self.font.size(str(self.score))[0], 155)
+        # KEYBOARD
         if not self.ai_game:
-            self.draw_txt("MOVE", 450, 290)
-            self.draw_txt("A: LEFT", 420, 345)
-            self.draw_txt("D: RIGHT", 420, 395)
-            self.draw_txt("S: DOWN", 420, 445)
-        pygame.draw.rect(self.display, 'black', [48, 20, 354, 74], 2, 5)
-        pygame.draw.rect(self.display, 'dark gray', [50, 22, 350, 70], 0, 5)
-        pygame.draw.rect(self.display, 'black', [48, 98, 354, 424], 2, 5)
-        pygame.draw.rect(self.display, 'gray', [50, 100, 350, 420], 0, 5)
+            self.draw_rectangle(420, 208, 180, 200, 'dark gray')
+            self.draw_txt("MOVE", 450, 218, 'other')
+            self.draw_txt("A:", 430, 268, color='other',size=35)
+            self.draw_txt("LEFT", 480, 268, size=35)
+            self.draw_txt("D:", 430, 318, color='other', size=35)
+            self.draw_txt("RIGHT", 480, 318, size=35)
+            self.draw_txt("S:", 430, 368, color='other', size=35)
+            self.draw_txt("DOWN", 480, 368, size=35)
+        # HIGH SCORE
+        self.draw_rectangle(50, 528, 550, 50, 'dark grey')
+        self.draw_txt("HIGH SCORE", 100, 535, color='other')
+        self.draw_txt(str(self.high_score), 404, 535)
     
-    def draw_block(self, value:int, x:int, y:int):
+    def draw_block(self, value:int, x:int, y:int, size=SIZE):
         block_value = 2**value
         if block_value > 8:
             txt_color = self.colors['light text']
@@ -105,13 +127,13 @@ class Game:
         else:
             block_color = self.colors['other']
 
-        pygame.draw.rect(self.display, block_color, [x, y, SIZE, SIZE], 0, 5)
-        pygame.draw.rect(self.display, txt_color, [x, y, SIZE, SIZE], 2, 5)
+        pygame.draw.rect(self.display, block_color, [x, y, size, size], 0, 5)
+        pygame.draw.rect(self.display, txt_color, [x, y, size, size], 2, 5)
         if value > 0:
             value_len = len(str(block_value))
             font = pygame.font.Font('freesansbold.ttf', 45 - (5 * value_len))
             value_txt = font.render(str(block_value), True, txt_color)
-            txt_rect = value_txt.get_rect(center=(x+SIZE/2, y+SIZE/2))
+            txt_rect = value_txt.get_rect(center=(x+size/2, y+size/2))
             self.display.blit(value_txt, txt_rect)
 
     def is_animating_place(self, x:int, y:int) -> bool:
@@ -187,8 +209,8 @@ class Game:
         self.display.blit(text_surface, text_surface.get_rect(center=self.button_rect_home.center))
 
     def draw_game_over(self):
-        pygame.draw.rect(self.display, 'black', (100, 200, 420, 200), 0, 10)
-        pygame.draw.rect(self.display, self.colors[2048], (100, 200, 420, 200), 4, 10)
+        pygame.draw.rect(self.display, 'black', (100, 200, 450, 200), 0, 10)
+        pygame.draw.rect(self.display, self.colors[2048], (100, 200, 450, 200), 4, 10)
         self.draw_txt('GAME OVER', 190, 240)
         self.draw_button_restart()
         self.draw_button_home()
@@ -267,6 +289,7 @@ class Game:
         self.draw_board_base()
 
         if self.game_over:
+            self.draw_game_over()
             for event in events:
                 if event.type == pygame.MOUSEMOTION:
                     self.hover_home = self.button_rect_home.collidepoint(event.pos)
@@ -406,8 +429,3 @@ class Game:
                         for x in range(COL):
                             if self.fall_map[y][x] == 1:
                                 self.draw_block(self.board_value[y][x], 50+SIZE*x, 100+SIZE*(y+self.animation_progress))
-
-            self.draw_block(self.next_num, 472, 60)
-
-        if self.game_over:
-            self.draw_game_over()

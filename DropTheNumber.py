@@ -7,7 +7,7 @@ from Home import Home
 
 # INITIAL SETUP
 CAPTION = "Drop the number"
-WIDTH = 620
+WIDTH = 650
 HEIGHT = 600
 FPS = 30
 
