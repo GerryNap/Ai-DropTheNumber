@@ -9,7 +9,7 @@ from Home import Home
 CAPTION = "Drop the number"
 WIDTH = 620
 HEIGHT = 600
-FPS = 60
+FPS = 30
 
 # 2048 game color library
 colors = {0: (204, 192, 179),
@@ -37,8 +37,8 @@ clock = pygame.time.Clock()
 
 stateManager = StateManager('home')
 
-home = Home(screen, stateManager, colors)
 game = Game(screen, stateManager, colors)
+home = Home(screen, stateManager, colors, game)
 
 states = {'home':home,
           'game':game}
