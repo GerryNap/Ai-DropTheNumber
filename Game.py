@@ -150,10 +150,17 @@ class Game:
 
         if self.hover_restart:
             button_color = self.colors[64]
+            text_color = self.colors['light text']
         else:
             button_color = self.colors[2048]
+            text_color = self.colors['dark text']
 
-        text_surface = font_obj.render(button_text, True, self.colors['dark text'])
+        shadow_rect = self.button_rect_restart.copy()
+        shadow_rect.x += 2
+        shadow_rect.y += 2
+        draw.rect(self.display, text_color, shadow_rect, border_radius=5)
+
+        text_surface = font_obj.render(button_text, True, text_color)
         draw.rect(self.display, button_color, self.button_rect_restart, border_radius=5)
         self.display.blit(text_surface, text_surface.get_rect(center=self.button_rect_restart.center))
 
@@ -165,10 +172,17 @@ class Game:
 
         if self.hover_home:
             button_color = self.colors[64]
+            text_color = self.colors['light text']
         else:
             button_color = self.colors[2048]
+            text_color = self.colors['dark text']
 
-        text_surface = font_obj.render(button_text, True, self.colors['dark text'])
+        shadow_rect = self.button_rect_home.copy()
+        shadow_rect.x += 2
+        shadow_rect.y += 2
+        draw.rect(self.display, text_color, shadow_rect, border_radius=5)
+
+        text_surface = font_obj.render(button_text, True, text_color)
         draw.rect(self.display, button_color, self.button_rect_home, border_radius=5)
         self.display.blit(text_surface, text_surface.get_rect(center=self.button_rect_home.center))
 

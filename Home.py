@@ -36,6 +36,11 @@ class Home:
             button_color = self.colors['other']
             text_color = self.colors['light text']
 
+        shadow_rect = self.button_rect_start.copy()
+        shadow_rect.x += 2
+        shadow_rect.y += 2
+        draw.rect(self.display, text_color, shadow_rect, border_radius=5)
+
         text_surface = font_obj.render(button_text, True, text_color)
         draw.rect(self.display, button_color, self.button_rect_start, border_radius=5)
         self.display.blit(text_surface, text_surface.get_rect(center=self.button_rect_start.center))
@@ -53,6 +58,11 @@ class Home:
         else:
             button_color = self.colors['other']
             text_color = self.colors['light text']
+
+        shadow_rect = self.button_rect_play.copy()
+        shadow_rect.x += 2
+        shadow_rect.y += 2
+        draw.rect(self.display, text_color, shadow_rect, border_radius=5)
 
         text_surface = font_obj.render(button_play_text, True, text_color)
         draw.rect(self.display, button_color, self.button_rect_play, border_radius=5)
