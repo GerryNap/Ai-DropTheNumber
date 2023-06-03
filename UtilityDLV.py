@@ -9,7 +9,7 @@ class UtilityDLV:
         self.facts = ""
 
         operating_system = platform.system()
-        dlv_path = "lib/dlv-2-"
+        dlv_path = "dlv/dlv-2-"
         if operating_system == "Linux":
             dlv_path += "linux"
         elif operating_system == "Windows":
