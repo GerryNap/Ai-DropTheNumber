@@ -47,6 +47,7 @@ class Game:
         self.animation_stack = []
 
         self.game_over = False
+        self.pause = False
 
         # Game Type
         self.ai_game = False 
@@ -59,8 +60,12 @@ class Game:
         # Buttons
         self.button_rect_restart = pygame.Rect(0, 0, 150, 50)
         self.button_rect_home = pygame.Rect(0, 0, 150, 50)
+        self.button_rect_pause = pygame.Rect(0, 0, 180, 50)
+        self.button_rect_continue = pygame.Rect(0, 0, 150, 50)
         self.hover_restart = False
         self.hover_home = False
+        self.hover_pause = False
+        self.hover_continue = False
 
     def set_home(self, home:Home):
         self.home = home
@@ -86,6 +91,28 @@ class Game:
         pygame.draw.rect(self.display, 'black', [x-2, y-2, size_x+4, size_y+4], 2, 5)
         pygame.draw.rect(self.display, color, [x, y, size_x, size_y], 0, 5)
 
+    def draw_button_pause(self):
+        self.button_rect_pause.center = (508, 496)
+        button_text = "PAUSE"
+        font.init()
+        font_obj = font.Font(None, 30)
+
+        if self.hover_pause and not self.pause:
+            button_color = self.colors[2048]
+            text_color = self.colors['dark text']
+        else:
+            button_color = self.colors[64]
+            text_color = self.colors['light text']
+
+        shadow_rect = self.button_rect_pause.copy()
+        shadow_rect.x += 2
+        shadow_rect.y += 2
+        draw.rect(self.display, text_color, shadow_rect, border_radius=5)
+
+        text_surface = font_obj.render(button_text, True, text_color)
+        draw.rect(self.display, button_color, self.button_rect_pause, border_radius=5)
+        self.display.blit(text_surface, text_surface.get_rect(center=self.button_rect_pause.center))
+
     def draw_board_base(self):
         self.display.fill(self.colors['bg'])
         
@@ -110,6 +137,8 @@ class Game:
             self.draw_txt("RIGHT", 480, 318, size=35)
             self.draw_txt("S:", 430, 368, color='other', size=35)
             self.draw_txt("DOWN", 480, 368, size=35)
+        # PAUSE
+        self.draw_button_pause()
         # HIGH SCORE
         self.draw_rectangle(50, 528, 550, 50, 'dark grey')
         self.draw_txt("HIGH SCORE", 100, 535, color='other')
@@ -215,6 +244,35 @@ class Game:
         self.draw_button_restart()
         self.draw_button_home()
 
+    def draw_button_continue(self):
+        self.button_rect_continue.center = (200, 350)
+        button_text = "CONTINUE"
+        font.init()
+        font_obj = font.Font(None, 30)
+
+        if self.hover_continue:
+            button_color = self.colors[64]
+            text_color = self.colors['light text']
+        else:
+            button_color = self.colors[2048]
+            text_color = self.colors['dark text']
+
+        shadow_rect = self.button_rect_continue.copy()
+        shadow_rect.x += 2
+        shadow_rect.y += 2
+        draw.rect(self.display, text_color, shadow_rect, border_radius=5)
+
+        text_surface = font_obj.render(button_text, True, text_color)
+        draw.rect(self.display, button_color, self.button_rect_continue, border_radius=5)
+        self.display.blit(text_surface, text_surface.get_rect(center=self.button_rect_continue.center))
+
+    def draw_pause(self):
+        pygame.draw.rect(self.display, 'black', (100, 200, 450, 200), 0, 10)
+        pygame.draw.rect(self.display, self.colors[2048], (100, 200, 450, 200), 4, 10)
+        self.draw_txt('PAUSE', 260, 240)
+        self.draw_button_continue()
+        self.draw_button_home()
+
     def start(self):
         self.board_value = [[0 for i in range(COL)] for j in range(ROW)]
         self.is_moving = False
@@ -223,9 +281,13 @@ class Game:
         self.h_delay = 0
         self.d_input = 0
         self.game_over = False
+        self.pause = False
         self.score = 0
+        self.speed = 0.1
         self.hover_restart = False
         self.hover_home = False
+        self.hover_pause = False
+        self.hover_continue = False
 
     def get_top_y(self, x:int) -> int:
         for y in range(ROW):
@@ -300,13 +362,36 @@ class Game:
                     if self.hover_home:
                         self.home.reset()
                         self.stateManager.set_state('home')
-                    else:
+                    elif self.hover_restart:
                         self.start()
         else:
+            if not self.pause:
+                for event in events:
+                    if event.type == pygame.MOUSEMOTION:
+                        self.hover_pause = self.button_rect_pause.collidepoint(event.pos)
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if self.hover_pause:
+                            self.pause = True
+            elif self.pause:
+                self.speed = 0
+                for event in events:
+                    if event.type == pygame.MOUSEMOTION:
+                        self.hover_home = self.button_rect_home.collidepoint(event.pos)
+                        self.hover_continue = self.button_rect_continue.collidepoint(event.pos)
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if self.hover_home:
+                            self.home.reset()
+                            self.stateManager.set_state('home')
+                        elif self.hover_continue:
+                            self.hover_continue = False
+                            self.hover_pause = False
+                            self.pause = False
+                            self.speed = 0.1
+
             if self.h_delay > 0:
                 self.h_delay -= -1
             if self.h_delay == 0 and self.is_moving:
-                if self.ai_game:
+                if self.ai_game and not self.pause:
                     if self.moving_xy[0] < self.utility.getSolution():
                         self.h_input += 1
                     elif self.moving_xy[0] > self.utility.getSolution():
@@ -435,3 +520,5 @@ class Game:
                         for x in range(COL):
                             if self.fall_map[y][x] == 1:
                                 self.draw_block(self.board_value[y][x], 50+SIZE*x, 100+SIZE*(y+self.animation_progress))
+            if self.pause:
+                self.draw_pause()
