@@ -39,6 +39,7 @@ stateManager = StateManager('home')
 
 game = Game(screen, stateManager, colors)
 home = Home(screen, stateManager, colors, game)
+game.set_home(home)
 
 states = {'home':home,
           'game':game}

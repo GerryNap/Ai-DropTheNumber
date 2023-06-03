@@ -68,6 +68,10 @@ class Home:
         draw.rect(self.display, button_color, self.button_rect_play, border_radius=5)
         self.display.blit(text_surface, text_surface.get_rect(center=self.button_rect_play.center))
 
+    def reset(self):
+        self.hover_play = False
+        self.hover_start = False
+
     def run(self, events):
         self.display.fill(self.colors['bg'])
         self.draw_title()

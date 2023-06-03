@@ -1,6 +1,7 @@
 import pygame
 import random
 import math
+import Home
 
 from pygame import draw, font
 from UtilityDLV import UtilityDLV
@@ -33,7 +34,8 @@ class Game:
         self.h_input = 0
         self.h_delay = 0
         self.d_input = 65
-        self.next_num = random.randint(1,5)
+        self.max_value = 4
+        self.next_num = random.randint(1,self.max_value)
 
         # Animation
         self.is_animating = False
@@ -60,6 +62,9 @@ class Game:
         self.hover_restart = False
         self.hover_home = False
 
+    def set_home(self, home:Home):
+        self.home = home
+
     def set_ai_game(self, ai_game:bool):
         self.ai_game = ai_game
 
@@ -72,13 +77,8 @@ class Game:
         self.high_score = int(file.readline())
         file.close()
 
-    def draw_txt(self, str:str, x:int, y:int, color='', size=-1):
-        if color == '':
-            color = 'light text'
-        if size == -1:
-            self.font = pygame.font.Font('freesansbold.ttf', FONT_SIZE)
-        else:
-            self.font = pygame.font.Font('freesansbold.ttf', size)
+    def draw_txt(self, str:str, x:int, y:int, color='light text', size=FONT_SIZE):
+        self.font = pygame.font.Font('freesansbold.ttf', size)
         src = self.font.render(str, True, self.colors[color])
         self.display.blit(src, [x,y])
 
@@ -218,12 +218,14 @@ class Game:
     def start(self):
         self.board_value = [[0 for i in range(COL)] for j in range(ROW)]
         self.is_moving = False
-        self.next_num = random.randint(1,5)
+        self.next_num = random.randint(1,self.max_value)
         self.h_input = 0
         self.h_delay = 0
         self.d_input = 0
         self.game_over = False
         self.score = 0
+        self.hover_restart = False
+        self.hover_home = False
 
     def get_top_y(self, x:int) -> int:
         for y in range(ROW):
@@ -296,6 +298,7 @@ class Game:
                     self.hover_restart = self.button_rect_restart.collidepoint(event.pos)
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.hover_home:
+                        self.home.reset()
                         self.stateManager.set_state('home')
                     else:
                         self.start()
@@ -379,16 +382,19 @@ class Game:
                     if self.animation_progress < 1:
                         self.animation_progress = min(self.animation_progress+0.1, 1)
                     elif self.animation_progress == 1:
-                        if self.animation_directions[0] and self.animation_place[0] -1 >= 0:
-                            self.board_value[self.animation_place[1]][self.animation_place[0]] += 1
-                            self.board_value[self.animation_place[1]][self.animation_place[0]-1] = 0
-                        if self.animation_directions[1] and self.animation_place[1] + 1 < ROW:
-                            self.board_value[self.animation_place[1]][self.animation_place[0]] += 1
-                            self.board_value[self.animation_place[1]+1][self.animation_place[0]] = 0
-                        if self.animation_directions[2] and self.animation_place[0] + 1 < COL:
-                            self.board_value[self.animation_place[1]][self.animation_place[0]] += 1
-                            self.board_value[self.animation_place[1]][self.animation_place[0]+1] = 0
-                        self.score += 2**(self.board_value[self.animation_place[1]][self.animation_place[0]])
+                        x = self.animation_place[0]
+                        y = self.animation_place[1]
+
+                        if self.animation_directions[0] and x-1 >= 0:
+                            self.board_value[y][x] += 1
+                            self.board_value[y][x-1] = 0
+                        if self.animation_directions[1] and y+1 < ROW:
+                            self.board_value[y][x] += 1
+                            self.board_value[y+1][x] = 0
+                        if self.animation_directions[2] and x+1 < COL:
+                            self.board_value[y][x] += 1
+                            self.board_value[y][x+1] = 0
+                        self.score += 2**(self.board_value[y][x])
                         self.is_animating = False
                         self.update_fall_map()
                         
