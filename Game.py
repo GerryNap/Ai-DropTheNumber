@@ -372,21 +372,6 @@ class Game:
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if self.hover_pause:
                             self.pause = True
-            elif self.pause:
-                self.speed = 0
-                for event in events:
-                    if event.type == pygame.MOUSEMOTION:
-                        self.hover_home = self.button_rect_home.collidepoint(event.pos)
-                        self.hover_continue = self.button_rect_continue.collidepoint(event.pos)
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        if self.hover_home:
-                            self.home.reset()
-                            self.stateManager.set_state('home')
-                        elif self.hover_continue:
-                            self.hover_continue = False
-                            self.hover_pause = False
-                            self.pause = False
-                            self.speed = 0.1
 
             if self.h_delay > 0:
                 self.h_delay -= -1
@@ -457,7 +442,7 @@ class Game:
                         self.moving_xy = [2, -1]
 
                         # DLV UPDATE
-                        if self.ai_game:
+                        if self.ai_game and not self.pause:
                             board = Board(self.board_value, ROW, COL)
                             self.utility.set_facts(board.get_facts(), self.moving_num)
                             self.utility.set_DLV()
@@ -522,3 +507,17 @@ class Game:
                                 self.draw_block(self.board_value[y][x], 50+SIZE*x, 100+SIZE*(y+self.animation_progress))
             if self.pause:
                 self.draw_pause()
+                self.speed = 0
+                for event in events:
+                    if event.type == pygame.MOUSEMOTION:
+                        self.hover_home = self.button_rect_home.collidepoint(event.pos)
+                        self.hover_continue = self.button_rect_continue.collidepoint(event.pos)
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if self.hover_home:
+                            self.home.reset()
+                            self.stateManager.set_state('home')
+                        elif self.hover_continue:
+                            self.hover_continue = False
+                            self.hover_pause = False
+                            self.pause = False
+                            self.speed = 0.1
