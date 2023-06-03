@@ -9,7 +9,7 @@ from Home import Home
 CAPTION = "Drop the number"
 WIDTH = 650
 HEIGHT = 600
-FPS = 30
+FPS = 60
 
 # 2048 game color library
 colors = {0: (204, 192, 179),

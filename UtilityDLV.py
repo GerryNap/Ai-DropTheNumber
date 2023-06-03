@@ -17,7 +17,7 @@ class UtilityDLV:
         elif operating_system == "Darwin":
             dlv_path += "macos"
         else:
-            raise ValueError("Sistema operativo non supportato")
+            raise ValueError("Operating system not supported")
         
         self.handler = DesktopHandler(DLV2DesktopService(dlv_path))
 

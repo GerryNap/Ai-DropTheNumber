@@ -372,6 +372,21 @@ class Game:
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if self.hover_pause:
                             self.pause = True
+            else:
+                self.speed = 0
+                for event in events:
+                    if event.type == pygame.MOUSEMOTION:
+                        self.hover_home = self.button_rect_home.collidepoint(event.pos)
+                        self.hover_continue = self.button_rect_continue.collidepoint(event.pos)
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if self.hover_home:
+                            self.home.reset()
+                            self.stateManager.set_state('home')
+                        elif self.hover_continue:
+                            self.hover_continue = False
+                            self.hover_pause = False
+                            self.pause = False
+                            self.speed = 0.1
 
             if self.h_delay > 0:
                 self.h_delay -= -1
@@ -446,41 +461,41 @@ class Game:
                             board = Board(self.board_value, ROW, COL)
                             self.utility.set_facts(board.get_facts(), self.moving_num)
                             self.utility.set_DLV()
+            if not self.pause:
+                if self.is_animating:
+                    if self.animation_type == CONBINE:
+                        if self.animation_progress < 1:
+                            self.animation_progress = min(self.animation_progress+0.1, 1)
+                        elif self.animation_progress == 1:
+                            x = self.animation_place[0]
+                            y = self.animation_place[1]
 
-            if self.is_animating:
-                if self.animation_type == CONBINE:
-                    if self.animation_progress < 1:
-                        self.animation_progress = min(self.animation_progress+0.1, 1)
-                    elif self.animation_progress == 1:
-                        x = self.animation_place[0]
-                        y = self.animation_place[1]
-
-                        if self.animation_directions[0] and x-1 >= 0:
-                            self.board_value[y][x] += 1
-                            self.board_value[y][x-1] = 0
-                        if self.animation_directions[1] and y+1 < ROW:
-                            self.board_value[y][x] += 1
-                            self.board_value[y+1][x] = 0
-                        if self.animation_directions[2] and x+1 < COL:
-                            self.board_value[y][x] += 1
-                            self.board_value[y][x+1] = 0
-                        self.score += 2**(self.board_value[y][x])
-                        self.is_animating = False
-                        self.update_fall_map()
-                        
-                elif self.animation_type == FALL:
-                    if self.animation_progress < 1:
-                        self.animation_progress = min(self.animation_progress+0.1, 1)
-                    elif self.animation_progress == 1:
-                        for y in range(ROW-1, -1, -1):
-                            for x in range(COL):
-                                if self.fall_map[y][x] == 1:
-                                    self.board_value[y+1][x] = self.board_value[y][x]
-                                    self.board_value[y][x] = 0
+                            if self.animation_directions[0] and x-1 >= 0:
+                                self.board_value[y][x] += 1
+                                self.board_value[y][x-1] = 0
+                            if self.animation_directions[1] and y+1 < ROW:
+                                self.board_value[y][x] += 1
+                                self.board_value[y+1][x] = 0
+                            if self.animation_directions[2] and x+1 < COL:
+                                self.board_value[y][x] += 1
+                                self.board_value[y][x+1] = 0
+                            self.score += 2**(self.board_value[y][x])
                             self.is_animating = False
                             self.update_fall_map()
-            else:
-                self.set_animation()
+                            
+                    elif self.animation_type == FALL:
+                        if self.animation_progress < 1:
+                            self.animation_progress = min(self.animation_progress+0.1, 1)
+                        elif self.animation_progress == 1:
+                            for y in range(ROW-1, -1, -1):
+                                for x in range(COL):
+                                    if self.fall_map[y][x] == 1:
+                                        self.board_value[y+1][x] = self.board_value[y][x]
+                                        self.board_value[y][x] = 0
+                                self.is_animating = False
+                                self.update_fall_map()
+                else:
+                    self.set_animation()                                        
             
             self.h_input = 0
             self.d_input = 0
@@ -507,17 +522,3 @@ class Game:
                                 self.draw_block(self.board_value[y][x], 50+SIZE*x, 100+SIZE*(y+self.animation_progress))
             if self.pause:
                 self.draw_pause()
-                self.speed = 0
-                for event in events:
-                    if event.type == pygame.MOUSEMOTION:
-                        self.hover_home = self.button_rect_home.collidepoint(event.pos)
-                        self.hover_continue = self.button_rect_continue.collidepoint(event.pos)
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        if self.hover_home:
-                            self.home.reset()
-                            self.stateManager.set_state('home')
-                        elif self.hover_continue:
-                            self.hover_continue = False
-                            self.hover_pause = False
-                            self.pause = False
-                            self.speed = 0.1
