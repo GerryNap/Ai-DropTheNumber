@@ -34,7 +34,7 @@ class Game:
         self.h_input = 0
         self.h_delay = 0
         self.d_input = 65
-        self.max_value = 4
+        self.max_value = 3
         self.next_num = random.randint(1,self.max_value)
 
         # Animation
@@ -314,6 +314,9 @@ class Game:
             self.is_animating = True
             self.animation_progress = 0
             self.animation_type = FALL
+    
+    def check_moving(self, x:int) -> bool:
+        return x <= self.moving_xy[0]
 
     def check_right(self, x:int, y:int) -> bool:
         value = self.board_value[y][x]
@@ -438,13 +441,13 @@ class Game:
 
                         self.is_moving = True
                         self.moving_num = self.next_num
-                        self.next_num = random.randint(1,5)
+                        self.next_num = random.randint(1,self.max_value)
                         self.moving_xy = [2, -1]
 
                         # DLV UPDATE
                         if self.ai_game and not self.pause:
-                            board = Board(self.board_value, ROW, COL)
-                            self.utility.set_facts(board.get_facts(), self.moving_num)
+                            board = Board(self.board_value)
+                            self.utility.set_facts(board.get_cell_facts(), board.get_size_fact(), self.moving_num)
                             self.utility.set_DLV()
 
             if self.is_animating:

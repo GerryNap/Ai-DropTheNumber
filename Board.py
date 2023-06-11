@@ -1,18 +1,17 @@
 class Board:
-    def __init__(self, board, n, m):
+    def __init__(self, board):
         self.board = board
-        self.n = n
-        self.m = m
 
-    def get_facts(self):
+    def get_cell_facts(self):
         facts = ""
 
-        for i in range(0, self.n):
-            for j in range(0, self.m):
-                # FATTI: coordinata e valore
-                facts += "c(" + str(i) + "," + str(j) + "," + str(self.board[i][j]) + "). "
-
-        # FATTI: dimensioni matrice
-        facts += "n(" + str(self.n) + "). m(" + str(self.m) + ")."
+        for i in range(0, len(self.board)):
+            for j in range(0, len(self.board[0])):
+                facts += f"cell({i},{j},{self.board[i][j]}).\n"
         
         return facts
+    
+    def get_size_fact(self):
+        row = len(self.board)
+        col = len(self.board[0])
+        return f"row({row}).\ncol({col}).\n"

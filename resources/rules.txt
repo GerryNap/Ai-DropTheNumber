@@ -1,41 +1,21 @@
-#show scelta/3.
-% R = riga, C = colonna, V = valore
-% Indica che una cella può essere selezionata('scelta) o non selezionata('nonscelta) a che condizione che la cella sia vuota('c(R, C, 0))
-% e il valore assegnato sia valido('b(V)')
-scelta(R,C,V) | nonscelta(R,C,V):- c(R,C,0), b(V).
+#show goodCell/3.
+goodCell(R,C,V) | badCell(R,C,V):- cell(R,C,0), actualValue(V).
 
-% Impone che ci sia esattamente una scelta per ogni riga e colonna
-:-#count{R,C:scelta(R,C,_)} != 1.
-% Proibisce di selezionare una cella cha ha un valore diverso da 0
-:-scelta(R,C,_),c(R,C,V), V != 0.
+topCell(R,C,V):- cell(R,C,V), cell(R-1,C,0), V != 0.
+position(V):- goodCell(_,C,V), topCell(_,C,V).
 
-% Impedisce che la cella selezionata abbia una cella vuota sotto di essa
-:-scelta(R,C,V), c(R+1,C,0), R < 5.
-% Definisce che una cella è nella "testa" di una colonna sa ha valore diverso da zero e la cella sopra di essa è vuota
-cellaInTesta(R,C,V):- c(R,C,V), c(R-1,C,0), V != 0.
+:- #count{R,C:goodCell(R,C,_)} != 1.
+:- goodCell(R,C,_), cell(R,C,V), V != 0.
+:- goodCell(R,C,V), cell(R+1,C,0), R < 5.
 
-% Indice che un valore è in una posizione corretta se è selezionato in una colonna in cui è in testa.
-giustaPosizione(V):- scelta(_,C,V), cellaInTesta(_,C,V).
+:~ goodCell(R,C,_), row(M). [M-R@1, R, C, M]
 
-% Assegna un costo M alla scelta della cella nella riga R e colonna C. L'etichetta 'M-R@1' indica che il costo M
-% è associato specificatamente a questa regola e può essere utilizzato per identificare le violazioni del risultato
-% finale. La presenza d 'R, C, M' dopo l'etichetta indica che R, C e M sono variabili utilizzate nella regola.
-:~scelta(R,C,_), m(M). [M-R@1, R, C, M]
+:~ goodCell(R,C,V1), cell(R+1,C,V2), V1 != V2. [V2@2, R,C,V1,V2]
+:~ goodCell(R,C,V1), cell(R,C-1,V2), V1 != V2. [V2@2, R,C,V1,V2]
+:~ goodCell(R,C,V1), cell(R,C+1,V2), V1 != V2. [V2@2, R,C,V1,V2]
 
-% Assegna un costo K in base alla differenza assoluta tra le colonne delle celle selezionate R, C1 e R, C2
-:~ scelta(R,C1,V), c(R,C2,V), &abs(C1-C2; K). [K@2, K]
-
-% Assegna un costo K alla differenza assoluta tra le colonne delle celle selzionate e quelle nella testa,
-% se il valore V non è nella giusta posizione
-:~ scelta(_,C1,V), cellaInTesta(_,C2,V), &abs(C1-C2; K), not giustaPosizione(V). [K@3, K]
-
-% Assegna un costo K alla differenza assoluto tra i valori V1 e V2, se V1 è selezionato in una riga diversa
-% da quella in cui V2 è nella testa
-:~scelta(R,C,V1), cellaInTesta(_,C,V2), &abs(V1-V2; K), R > 1. [K@4, K]
-
-% Assegna un costo K se il valore V1 selezionato è maggiore del valore V2 nella testa della stessa colonna
-:~scelta(_,C,V1), cellaInTesta(_,C,V2), &abs(V1-V2; K), V1 > V2. [K@5, K]
-
-% Assegna un costo R se il valore V1 selezionato nella riga 0 è diverso dal valore V2 presente nella stessa
-% colonna nella riga 1
-:~scelta(0,C,V1), R = 1, c(R,C,V2), V1 != V2. [R@6,R]
+:~ goodCell(R,C1,V), cell(R,C2,V), &abs(C1-C2; K). [K@2, K]
+:~ goodCell(_,C1,V), topCell(_,C2,V), &abs(C1-C2; K), not position(V). [K@3, K]
+:~ goodCell(R,C,V1), topCell(_,C,V2), &abs(V1-V2; K), R > 1. [K@4, K]
+:~ goodCell(_,C,V1), topCell(_,C,V2), &abs(V1-V2; K), V1 > V2. [K@5, K]
+:~ goodCell(0,C,V1), R = 1, cell(R,C,V2), V1 != V2. [R@6,R]
