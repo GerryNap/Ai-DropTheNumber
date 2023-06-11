@@ -9,7 +9,7 @@ class UtilityDLV:
         self.facts = ""
 
         operating_system = platform.system()
-        dlv_path = "lib/dlv-2-"
+        dlv_path = "dlv/dlv-2-"
         if operating_system == "Linux":
             dlv_path += "linux"
         elif operating_system == "Windows":
@@ -17,7 +17,7 @@ class UtilityDLV:
         elif operating_system == "Darwin":
             dlv_path += "macos"
         else:
-            raise ValueError("Sistema operativo non supportato")
+            raise ValueError("Operating system not supported")
         
         self.handler = DesktopHandler(DLV2DesktopService(dlv_path))
 
