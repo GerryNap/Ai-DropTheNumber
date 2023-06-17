@@ -34,7 +34,7 @@ class Game:
         self.h_input = 0
         self.h_delay = 0
         self.d_input = 65
-        self.max_value = 3
+        self.max_value = 4
         self.next_num = random.randint(1,self.max_value)
 
         # Animation
@@ -462,7 +462,7 @@ class Game:
                         # DLV UPDATE
                         if self.ai_game and not self.pause:
                             board = Board(self.board_value)
-                            self.utility.set_facts(board.get_cell_facts(), board.get_size_fact(), self.moving_num)
+                            self.utility.set_facts(board.get_cell_facts(), board.get_size_fact(), self.moving_num, self.next_num)
                             self.utility.set_DLV()
             if not self.pause:
                 if self.is_animating:

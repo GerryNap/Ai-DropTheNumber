@@ -29,18 +29,19 @@ class UtilityDLV:
         self.handler.add_program(self.programVariable)
 
     def getSolution(self) -> int:
-        answersets = self.handler.start_sync()
-        for answerset in answersets.get_optimal_answer_sets():
-            print(str(answerset))
-            return int(str(answerset)[13])
+        result = self.handler.start_sync()
+        answersets = result.get_optimal_answer_sets()
+        for answerset in answersets:
+            return int(str(answerset)[14])
 
     def set_DLV(self):
         self.programVariable.clear_all()
         self.programVariable.add_program(self.facts)
         
-    def set_facts(self, board, size, block):
+    def set_facts(self, board, size, block, next_block):
         # FATTI: valori attualmente contenuti nella matrice
         self.facts = board
         self.facts += size
         # FATTI: valore da aggiungere alla matrice
         self.facts +=  "actualValue(" + str(block) + ")."
+        self.facts +=  "nextValue(" + str(next_block) + ")."
