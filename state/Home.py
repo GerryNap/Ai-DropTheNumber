@@ -1,6 +1,7 @@
 import pygame
 from pygame import font, draw
 from component.Color import Color
+from component.Button import Button
 import state.Game as Game
 
 class Home:
@@ -12,9 +13,9 @@ class Home:
         self.title_font_size = 60
         self.game = game
 
-        self.hover_start = False
+        self.hover_ai = False
         self.hover_play = False
-        self.button_rect_start = pygame.Rect(0, 0, 200, 50)
+        self.button_rect_ai = pygame.Rect(0, 0, 200, 50)
         self.button_rect_play = pygame.Rect(0, 0, 200, 50)
 
     def draw_title(self):
@@ -23,67 +24,25 @@ class Home:
         title_rect = title_surface.get_rect(center=(self.display.get_width() // 2, self.display.get_height() // 4))
         self.display.blit(title_surface, title_rect)
 
-    def draw_button_start(self):
-        self.button_rect_start.center = (self.display.get_width() // 2, self.display.get_height() // 2)
-        button_text = "START"
-        font.init()
-        font_obj = font.Font(None, self.font_size)
-
-        if self.hover_start:
-            button_color = Color.get(2048)
-            text_color = Color.get('dark')
-        else:
-            button_color = Color.get('other')
-            text_color = Color.get('light')
-
-        shadow_rect = self.button_rect_start.copy()
-        shadow_rect.x += 2
-        shadow_rect.y += 2
-        draw.rect(self.display, text_color, shadow_rect, border_radius=5)
-
-        text_surface = font_obj.render(button_text, True, text_color)
-        draw.rect(self.display, button_color, self.button_rect_start, border_radius=5)
-        self.display.blit(text_surface, text_surface.get_rect(center=self.button_rect_start.center))
-
-    def draw_button_play(self):
-        self.button_rect_play.center = (self.display.get_width() // 2, self.display.get_height() // 2 + 70)
-        button_play_text = "PLAY"
-
-        font.init()
-        font_obj = font.Font(None, self.font_size)
-
-        if self.hover_play:
-            button_color = Color.get(2048)
-            text_color = Color.get('dark')
-        else:
-            button_color = Color.get('other')
-            text_color = Color.get('light')
-
-        shadow_rect = self.button_rect_play.copy()
-        shadow_rect.x += 2
-        shadow_rect.y += 2
-        draw.rect(self.display, text_color, shadow_rect, border_radius=5)
-
-        text_surface = font_obj.render(button_play_text, True, text_color)
-        draw.rect(self.display, button_color, self.button_rect_play, border_radius=5)
-        self.display.blit(text_surface, text_surface.get_rect(center=self.button_rect_play.center))
-
     def reset(self):
         self.hover_play = False
-        self.hover_start = False
+        self.hover_ai = False
 
     def run(self, events):
         self.display.fill(Color.get('bg'))
         self.draw_title()
-        self.draw_button_start()
-        self.draw_button_play()
+        
+        Button.draw(self.display, self.button_rect_ai, "AI PLAY", self.hover_ai,
+                    self.display.get_width() // 2, self.display.get_height() // 2)
+        Button.draw(self.display, self.button_rect_play, "PLAY", self.hover_play,
+                    self.display.get_width() // 2, self.display.get_height() // 2 + 70)
 
         for event in events:
             if event.type == pygame.MOUSEMOTION:
-                self.hover_start = self.button_rect_start.collidepoint(event.pos)
+                self.hover_ai = self.button_rect_ai.collidepoint(event.pos)
                 self.hover_play = self.button_rect_play.collidepoint(event.pos)
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.hover_start:
+                if self.hover_ai:
                     self.game.set_ai_game(True)
                     self.game.start()
                     self.stateManager.set_state('game')
