@@ -8,6 +8,7 @@ from UtilityDLV import UtilityDLV
 from component.Color import Color
 from component.Board import Board
 from component.Cell import Cell
+from component.Button import Button
 
 COL = 5
 ROW = 6
@@ -92,28 +93,6 @@ class Game:
         pygame.draw.rect(self.display, 'black', [x-2, y-2, size_x+4, size_y+4], 2, 5)
         pygame.draw.rect(self.display, color, [x, y, size_x, size_y], 0, 5)
 
-    def draw_button_pause(self):
-        self.button_rect_pause.center = (508, 496)
-        button_text = "PAUSE"
-        font.init()
-        font_obj = font.Font(None, 30)
-
-        if self.hover_pause and not self.pause:
-            button_color = Color.get(2048)
-            text_color = Color.get('dark')
-        else:
-            button_color = Color.get(64)
-            text_color = Color.get('light')
-
-        shadow_rect = self.button_rect_pause.copy()
-        shadow_rect.x += 2
-        shadow_rect.y += 2
-        draw.rect(self.display, text_color, shadow_rect, border_radius=5)
-
-        text_surface = font_obj.render(button_text, True, text_color)
-        draw.rect(self.display, button_color, self.button_rect_pause, border_radius=5)
-        self.display.blit(text_surface, text_surface.get_rect(center=self.button_rect_pause.center))
-
     def draw_board_base(self):
         self.display.fill(Color.get('bg'))
         
@@ -139,7 +118,7 @@ class Game:
             self.draw_txt("S:", 430, 368, color='other', size=35)
             self.draw_txt("DOWN", 480, 368, size=35)
         # PAUSE
-        self.draw_button_pause()
+        Button.draw_red(self.display,self.button_rect_pause,"PAUSE",self.hover_pause,508,496)
         # HIGH SCORE
         self.draw_rectangle(50, 528, 550, 50, 'dark grey')
         self.draw_txt("HIGH SCORE", 100, 535, color='other')
@@ -173,85 +152,21 @@ class Game:
                     else:
                         Cell.draw(self.display,self.board_value[y][x], 50+SIZE*x, 100+SIZE*y, SIZE)
 
-    def draw_button_restart(self):
-        self.button_rect_restart.center = (200, 350)
-        button_text = "RESTART"
-        font.init()
-        font_obj = font.Font(None, 30)
-
-        if self.hover_restart:
-            button_color = Color.get(64)
-            text_color = Color.get('light')
-        else:
-            button_color = Color.get(2048)
-            text_color = Color.get('dark')
-
-        shadow_rect = self.button_rect_restart.copy()
-        shadow_rect.x += 2
-        shadow_rect.y += 2
-        draw.rect(self.display, text_color, shadow_rect, border_radius=5)
-
-        text_surface = font_obj.render(button_text, True, text_color)
-        draw.rect(self.display, button_color, self.button_rect_restart, border_radius=5)
-        self.display.blit(text_surface, text_surface.get_rect(center=self.button_rect_restart.center))
-
-    def draw_button_home(self):
-        self.button_rect_home.center = (self.display.get_width()-200, 350)
-        button_text = "HOME"
-        font.init()
-        font_obj = font.Font(None, 30)
-
-        if self.hover_home:
-            button_color = Color.get(64)
-            text_color = Color.get('light')
-        else:
-            button_color = Color.get(2048)
-            text_color = Color.get('dark')
-
-        shadow_rect = self.button_rect_home.copy()
-        shadow_rect.x += 2
-        shadow_rect.y += 2
-        draw.rect(self.display, text_color, shadow_rect, border_radius=5)
-
-        text_surface = font_obj.render(button_text, True, text_color)
-        draw.rect(self.display, button_color, self.button_rect_home, border_radius=5)
-        self.display.blit(text_surface, text_surface.get_rect(center=self.button_rect_home.center))
-
     def draw_game_over(self):
         pygame.draw.rect(self.display, 'black', (100, 200, 450, 200), 0, 10)
         pygame.draw.rect(self.display, Color.get(2048), (100, 200, 450, 200), 4, 10)
         self.draw_txt('GAME OVER', 190, 240)
-        self.draw_button_restart()
-        self.draw_button_home()
-
-    def draw_button_continue(self):
-        self.button_rect_continue.center = (200, 350)
-        button_text = "CONTINUE"
-        font.init()
-        font_obj = font.Font(None, 30)
-
-        if self.hover_continue:
-            button_color = Color.get(64)
-            text_color = Color.get('light')
-        else:
-            button_color = Color.get(2048)
-            text_color = Color.get('dark')
-
-        shadow_rect = self.button_rect_continue.copy()
-        shadow_rect.x += 2
-        shadow_rect.y += 2
-        draw.rect(self.display, text_color, shadow_rect, border_radius=5)
-
-        text_surface = font_obj.render(button_text, True, text_color)
-        draw.rect(self.display, button_color, self.button_rect_continue, border_radius=5)
-        self.display.blit(text_surface, text_surface.get_rect(center=self.button_rect_continue.center))
+        Button.draw_light(self.display,self.button_rect_restart,"RESTART",self.hover_restart,200,350)
+        Button.draw_light(self.display,self.button_rect_home,"HOME",self.hover_home,
+                          self.display.get_width()-200, 350)
 
     def draw_pause(self):
         pygame.draw.rect(self.display, 'black', (100, 200, 450, 200), 0, 10)
         pygame.draw.rect(self.display, Color.get(2048), (100, 200, 450, 200), 4, 10)
         self.draw_txt('PAUSE', 260, 240)
-        self.draw_button_continue()
-        self.draw_button_home()
+        Button.draw_light(self.display,self.button_rect_continue,"CONTINUE",self.hover_continue,200,350)
+        Button.draw_light(self.display,self.button_rect_home,"HOME",self.hover_home,
+                          self.display.get_width()-200, 350)
 
     def start(self):
         self.board_value = [[0 for i in range(COL)] for j in range(ROW)]

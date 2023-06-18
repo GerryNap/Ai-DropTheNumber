@@ -1,5 +1,4 @@
 import pygame
-from pygame import font, draw
 from component.Color import Color
 from component.Button import Button
 import state.Game as Game
@@ -31,10 +30,10 @@ class Home:
     def run(self, events):
         self.display.fill(Color.get('bg'))
         self.draw_title()
-        
-        Button.draw(self.display, self.button_rect_ai, "AI PLAY", self.hover_ai,
+
+        Button.draw_dark(self.display, self.button_rect_ai, "AI PLAY", self.hover_ai,
                     self.display.get_width() // 2, self.display.get_height() // 2)
-        Button.draw(self.display, self.button_rect_play, "PLAY", self.hover_play,
+        Button.draw_dark(self.display, self.button_rect_play, "PLAY", self.hover_play,
                     self.display.get_width() // 2, self.display.get_height() // 2 + 70)
 
         for event in events:
