@@ -1,4 +1,5 @@
 import pygame
+import sys
 from component.Color import Color
 from component.Button import Button
 import state.Game as Game
@@ -14,8 +15,10 @@ class Home:
 
         self.hover_ai = False
         self.hover_play = False
+        self.hover_quit = False
         self.button_rect_ai = pygame.Rect(0, 0, 200, 50)
         self.button_rect_play = pygame.Rect(0, 0, 200, 50)
+        self.button_rect_quit = pygame.Rect(0, 0, 200, 50)
 
     def draw_title(self):
         title_font = pygame.font.Font(None, self.title_font_size)
@@ -35,11 +38,14 @@ class Home:
                     self.display.get_width() // 2, self.display.get_height() // 2)
         Button.draw_dark(self.display, self.button_rect_play, "PLAY", self.hover_play,
                     self.display.get_width() // 2, self.display.get_height() // 2 + 70)
+        Button.draw_red(self.display, self.button_rect_quit, "QUIT", self.hover_quit,
+                    self.display.get_width() // 2, self.display.get_height() // 2 + 140)
 
         for event in events:
             if event.type == pygame.MOUSEMOTION:
                 self.hover_ai = self.button_rect_ai.collidepoint(event.pos)
                 self.hover_play = self.button_rect_play.collidepoint(event.pos)
+                self.hover_quit = self.button_rect_quit.collidepoint(event.pos)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.hover_ai:
                     self.game.set_ai_game(True)
@@ -49,3 +55,6 @@ class Home:
                     self.game.set_ai_game(False)
                     self.game.start()
                     self.stateManager.set_state('game')
+                if self.hover_quit:
+                    pygame.quit()
+                    sys.exit()
