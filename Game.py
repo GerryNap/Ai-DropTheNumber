@@ -6,6 +6,7 @@ import Home
 from pygame import draw, font
 from UtilityDLV import UtilityDLV
 from Board import Board
+from component.Cell import Cell
 
 COL = 5
 ROW = 6
@@ -122,7 +123,7 @@ class Game:
         # NEXT BLOCK
         self.draw_rectangle(420, 22, 180, 70, 'dark gray')
         self.draw_txt("NEXT", 430, 42, 'other', size=30)
-        self.draw_block(self.next_num, 530, 27, size=60)
+        Cell.draw(self.display,self.next_num,530,27,60)
         # LIVE SCORE
         self.draw_rectangle(420, 100, 180, 100, 'dark gray')
         self.draw_txt("SCORE", 440, 110, 'other')
@@ -143,27 +144,6 @@ class Game:
         self.draw_rectangle(50, 528, 550, 50, 'dark grey')
         self.draw_txt("HIGH SCORE", 100, 535, color='other')
         self.draw_txt(str(self.high_score), 404, 535)
-    
-    def draw_block(self, value:int, x:int, y:int, size=SIZE):
-        block_value = 2**value
-        if block_value > 8:
-            txt_color = self.colors['light text']
-        else:
-            txt_color = self.colors['dark text']
-
-        if block_value <= 2048:
-            block_color = self.colors[block_value]
-        else:
-            block_color = self.colors['other']
-
-        pygame.draw.rect(self.display, block_color, [x, y, size, size], 0, 5)
-        pygame.draw.rect(self.display, txt_color, [x, y, size, size], 2, 5)
-        if value > 0:
-            value_len = len(str(block_value))
-            font = pygame.font.Font('freesansbold.ttf', 45 - (5 * value_len))
-            value_txt = font.render(str(block_value), True, txt_color)
-            txt_rect = value_txt.get_rect(center=(x+size/2, y+size/2))
-            self.display.blit(value_txt, txt_rect)
 
     def is_animating_place(self, x:int, y:int) -> bool:
         if self.animation_type == CONBINE:
@@ -191,7 +171,7 @@ class Game:
                     if self.is_animating and self.is_animating_place(x, y):
                         continue
                     else:
-                        self.draw_block(self.board_value[y][x], 50+SIZE*x, 100+SIZE*y)
+                        Cell.draw(self.display,self.board_value[y][x], 50+SIZE*x, 100+SIZE*y, SIZE)
 
     def draw_button_restart(self):
         self.button_rect_restart.center = (200, 350)
@@ -506,22 +486,22 @@ class Game:
             self.draw_board()
 
             if self.is_moving:
-                self.draw_block(self.moving_num, 50+SIZE*self.moving_xy[0], 100+SIZE*self.moving_xy[1])
+                Cell.draw(self.display,self.moving_num, 50+SIZE*self.moving_xy[0], 100+SIZE*self.moving_xy[1], SIZE)
             if self.is_animating:
                 if self.animation_type == CONBINE:
                     x = self.animation_place[0]
                     y = self.animation_place[1]
                     value = self.board_value[y][x]
                     if self.animation_directions[0] and x-1 >= 0:
-                        self.draw_block(value, 50+SIZE*(x-1+self.animation_progress), 100+SIZE*y)
+                        Cell.draw(self.display,value, 50+SIZE*(x-1+self.animation_progress), 100+SIZE*y, SIZE)
                     if self.animation_directions[1] and y+1 < ROW:
-                        self.draw_block(value, 50+SIZE*x, 100+SIZE*(y+1-self.animation_progress))
+                        Cell.draw(self.display,value, 50+SIZE*x, 100+SIZE*(y+1-self.animation_progress), SIZE)
                     if self.animation_directions[2] and x+1 < COL:
-                        self.draw_block(value, 50+SIZE*(x+1-self.animation_progress), 100+SIZE*y)
+                        Cell.draw(self.display,value, 50+SIZE*(x+1-self.animation_progress), 100+SIZE*y, SIZE)
                 elif self.animation_type == FALL:
                     for y in range(ROW):
                         for x in range(COL):
                             if self.fall_map[y][x] == 1:
-                                self.draw_block(self.board_value[y][x], 50+SIZE*x, 100+SIZE*(y+self.animation_progress))
+                                Cell.draw(self.display,self.board_value[y][x], 50+SIZE*x, 100+SIZE*(y+self.animation_progress), SIZE)
             if self.pause:
                 self.draw_pause()

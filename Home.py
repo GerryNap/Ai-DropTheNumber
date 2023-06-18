@@ -1,15 +1,15 @@
 import pygame
 from pygame import font, draw
+from component.Color import Color
 import Game
 
 class Home:
-    def __init__(self, display, stateManager, colors, game:Game):
+    def __init__(self, display, stateManager, game:Game):
         self.display = display
         self.stateManager = stateManager
         self.font_size = 30
         self.title_text = "Drop the Number"
         self.title_font_size = 60
-        self.colors = colors
         self.game = game
 
         self.hover_start = False
@@ -19,7 +19,7 @@ class Home:
 
     def draw_title(self):
         title_font = pygame.font.Font(None, self.title_font_size)
-        title_surface = title_font.render(self.title_text, True, self.colors['light text'])
+        title_surface = title_font.render(self.title_text, True, Color.get('light'))
         title_rect = title_surface.get_rect(center=(self.display.get_width() // 2, self.display.get_height() // 4))
         self.display.blit(title_surface, title_rect)
 
@@ -30,11 +30,11 @@ class Home:
         font_obj = font.Font(None, self.font_size)
 
         if self.hover_start:
-            button_color = self.colors[2048]
-            text_color = self.colors['dark text']
+            button_color = Color.get(2048)
+            text_color = Color.get('dark')
         else:
-            button_color = self.colors['other']
-            text_color = self.colors['light text']
+            button_color = Color.get('other')
+            text_color = Color.get('light')
 
         shadow_rect = self.button_rect_start.copy()
         shadow_rect.x += 2
@@ -53,11 +53,11 @@ class Home:
         font_obj = font.Font(None, self.font_size)
 
         if self.hover_play:
-            button_color = self.colors[2048]
-            text_color = self.colors['dark text']
+            button_color = Color.get(2048)
+            text_color = Color.get('dark')
         else:
-            button_color = self.colors['other']
-            text_color = self.colors['light text']
+            button_color = Color.get('other')
+            text_color = Color.get('light')
 
         shadow_rect = self.button_rect_play.copy()
         shadow_rect.x += 2
@@ -73,7 +73,7 @@ class Home:
         self.hover_start = False
 
     def run(self, events):
-        self.display.fill(self.colors['bg'])
+        self.display.fill(Color.get('bg'))
         self.draw_title()
         self.draw_button_start()
         self.draw_button_play()
