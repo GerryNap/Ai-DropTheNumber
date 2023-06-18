@@ -1,7 +1,7 @@
 import pygame
 from pygame import font, draw
 from component.Color import Color
-import Game
+import state.Game as Game
 
 class Home:
     def __init__(self, display, stateManager, game:Game):

@@ -1,9 +1,9 @@
 import sys
 import pygame
 
-from Game import Game
+from state.Game import Game
 from StateManager import StateManager
-from Home import Home
+from state.Home import Home
 
 # INITIAL SETUP
 CAPTION = "Drop the number"

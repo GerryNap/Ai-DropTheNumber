@@ -1,11 +1,11 @@
 import pygame
 import random
 import math
-import Home
+import state.Home as Home
 
 from pygame import draw, font
 from UtilityDLV import UtilityDLV
-from Board import Board
+from component.Board import Board
 from component.Cell import Cell
 
 COL = 5
