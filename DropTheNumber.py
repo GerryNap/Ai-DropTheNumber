@@ -37,7 +37,7 @@ clock = pygame.time.Clock()
 
 stateManager = StateManager('home')
 
-game = Game(screen, stateManager, colors)
+game = Game(screen, stateManager)
 home = Home(screen, stateManager, game)
 game.set_home(home)
 
