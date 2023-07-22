@@ -31,7 +31,7 @@ class Game:
         self.is_moving = False
         self.moving_xy = [-1, -1]
         self.moving_num = 0
-        self.speed = 0.1
+        self.speed = 0.06
         self.add_delay = 10
         self.h_input = 0
         self.h_delay = 0

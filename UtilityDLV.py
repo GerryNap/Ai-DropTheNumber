@@ -4,18 +4,14 @@ from embasp.languages.asp.asp_input_program import ASPInputProgram
 import platform
 
 class UtilityDLV:
-
     def __init__(self):
         self.facts = ""
 
         operating_system = platform.system()
-        dlv_path = "dlv/dlv-2-"
-        if operating_system == "Linux":
-            dlv_path += "linux"
-        elif operating_system == "Windows":
-            dlv_path += "windows.exe"
-        elif operating_system == "Darwin":
-            dlv_path += "macos"
+        supported = ["Linux","Windows","Darwin"]
+
+        if operating_system in supported:
+            dlv_path = "dlv/dlv-2-" + operating_system
         else:
             raise ValueError("Operating system not supported")
         

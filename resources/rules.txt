@@ -11,22 +11,16 @@ emptyCell(R,C) | fullCell(R,C) :- cell(R,C,0).
 :- emptyCell(_,C), row(NC), C >= NC.
 :- emptyCell(_,C), C < 0.
 
-:~ emptyCell(R,C), actualValue(V1), nextValue(V2), cell(R,C,V3), V1 != V2, V2 == V3. [V1@1, V1]
+%:~ emptyCell(R,C), row(NR), &abs(NR-R-1; K). [K@1, K]
 
-:~ emptyCell(R,C), row(NR), &abs(R-NR+1; K). [K@2, K]
+:~ emptyCell(R,C), actualValue(V1), cell(R+1,C,V2), V1 != V2, &abs(V2-V1; K). [K@2, K]
+:~ emptyCell(R,C), actualValue(V1), cell(R,C-1,V2), V1 != V2, &abs(V2-V1; K). [K@2, K]
+:~ emptyCell(R,C), actualValue(V1), cell(R,C+1,V2), V1 != V2, &abs(V2-V1; K). [K@2, K]
 
-:~ emptyCell(R,C), cell(R-1,C,V), V == 0. [1@3]
-:~ emptyCell(R,C), cell(R-2,C,V), V == 0. [1@3]
-:~ emptyCell(R,C), cell(R-3,C,V), V == 0. [1@3]
-:~ emptyCell(R,C), cell(R-4,C,V), V == 0. [1@3]
-:~ emptyCell(R,C), cell(R-5,C,V), V == 0. [1@3]
+:~ emptyCell(R,C), actualValue(V1), cell(R+1,C,V2), V2 != V1*2, &abs(V2-V1; K). [K@3, K]
+:~ emptyCell(R,C), actualValue(V1), cell(R+2,C,V2), V2 != V1*4, &abs(V2-V1; K). [K@3, K]
+:~ emptyCell(R,C), actualValue(V1), cell(R+3,C,V2), V2 != V1*8, &abs(V2-V1; K). [K@3, K]
+:~ emptyCell(R,C), actualValue(V1), cell(R+4,C,V2), V2 != V1*16, &abs(V2-V1; K). [K@3, K]
+:~ emptyCell(R,C), actualValue(V1), cell(R+5,C,V2), V2 != V1*32, &abs(V2-V1; K). [K@3, K]
 
-:~ emptyCell(R,C), actualValue(V1), cell(R+1,C,V2), V2 != V1*2, &abs(V2-V1; K). [K@4, K]
-:~ emptyCell(R,C), actualValue(V1), cell(R+2,C,V2), V2 != V1*4, &abs(V2-V1; K). [K@4, K]
-:~ emptyCell(R,C), actualValue(V1), cell(R+3,C,V2), V2 != V1*8, &abs(V2-V1; K). [K@4, K]
-:~ emptyCell(R,C), actualValue(V1), cell(R+4,C,V2), V2 != V1*16, &abs(V2-V1; K). [K@4, K]
-:~ emptyCell(R,C), actualValue(V1), cell(R+5,C,V2), V2 != V1*32, &abs(V2-V1; K). [K@4, K]
-
-:~ emptyCell(R,C), actualValue(V1), cell(R+1,C,V2), V1 != V2, &abs(V2-V1; K). [K@5, K]
-:~ emptyCell(R,C), actualValue(V1), cell(R,C-1,V2), V1 != V2, &abs(V2-V1; K). [K@5, K]
-:~ emptyCell(R,C), actualValue(V1), cell(R,C+1,V2), V1 != V2, &abs(V2-V1; K). [K@5, K]
+:~ emptyCell(R,C), actualValue(V1), nextValue(V2), cell(R,C,V3), V1 != V2, V2 == V3. [V1@4, V1]
