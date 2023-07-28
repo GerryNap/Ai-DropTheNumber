@@ -9,7 +9,7 @@ from state.Home import Home
 CAPTION = "Drop the number"
 WIDTH = 650
 HEIGHT = 600
-FPS = 45
+FPS = 35
 
 pygame.init()
 pygame.display.set_caption(CAPTION)

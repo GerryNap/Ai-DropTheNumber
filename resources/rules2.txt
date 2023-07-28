@@ -1,0 +1,20 @@
+#show emptyCell/3.
+emptyCell(R,C,V) | fullCell(R,C,V):- cell(R,C,0), actualValue(V).
+
+:-#count{R,C:emptyCell(R,C,_)} != 1.
+:-emptyCell(R,C,_),cell(R,C,V), V != 0.
+:-emptyCell(R,C,_),cell(R+1,C,0).
+
+:-emptyCell(R,C,V), cell(R+1,C,0), R < 5.
+giustaPosizione(V):- emptyCell(_,C,V).
+
+:~emptyCell(R,C,_), col(M). [M-R@1, R, C, M]
+
+:~ emptyCell(R,C1,V), cell(R,C2,V), &abs(C1-C2; K). [K@2, K]
+
+:~ emptyCell(_,C1,V), &abs(C1-C2; K), not giustaPosizione(V). [K@3, K]
+
+:~emptyCell(R,C,V1), &abs(V1-V2; K), R > 1. [K@4, K]
+:~emptyCell(_,C,V1), &abs(V1-V2; K), V1 > V2. [K@5, K]
+
+:~emptyCell(0,C,V1), R = 1, cell(R,C,V2), V1 != V2. [R@6,R]
